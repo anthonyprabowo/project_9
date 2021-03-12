@@ -40,7 +40,7 @@ router.post('/', authenticateUser, asyncHandler( async (req, res) => {
   const user = req.currentUser;
   req.body.userId = user.id;
   const course = await Course.create(req.body);
-  res.location(`api/courses/${course.id}`).status(201);
+  res.location(`api/courses/${course.id}`).status(201).end();
   
   
 }))
@@ -56,7 +56,7 @@ router.put('/:id', authenticateUser, asyncHandler( async (req, res) => {
           id: course.id
         }
       });
-      res.status(204)
+      res.status(204).end();
     } else {
       res.status(403).json({message: "Update failed. You're not the owner of the post"})
     }
@@ -64,14 +64,20 @@ router.put('/:id', authenticateUser, asyncHandler( async (req, res) => {
 }));
 
 // delete a course
-router.delete('/:id', asyncHandler(async (req, res) => {
+router.delete('/:id', authenticateUser, asyncHandler(async (req, res) => {
   const course = await Course.findByPk(req.params.id);
+  const user = req.currentUser;
   if(course) {
-    await course.destroy();
-    res.status(204);
+    if(course.userId === user.id) {
+      await course.destroy();
+      res.status(204).end();
+    } else {
+      res.status(400).json({ message: "You don't have permission to delete this course"});
+    }
   } else {
-    res.status(400).json({ message: `Course with id ${req.params.id} didn't exist`});
+    res.status(400).json( { message: `The course with id ${req.params.id} doesn't exist`} )
   }
+  
   
 }));
 
