@@ -8,11 +8,14 @@ const User  = require('../models').User;
 
 // get route
 router.get('/', authenticateUser, asyncHandler(async (req, res) => {
-  const user = req.currentUser;
-  res.json({ 
-    user: user.firstName + " " + user.lastName,
-    username: user.emailAddress 
-  });
+  const authenticatedUser = req.currentUser;
+  const user = await User.findOne({
+    where: {
+      id: authenticatedUser.id
+    },
+    attributes: ['id', 'firstName', 'lastName', 'emailAddress']
+  })
+  res.json({user});
 }));
 
 // user post route

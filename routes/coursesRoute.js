@@ -26,7 +26,8 @@ router.get('/:id',asyncHandler( async (req, res) => {
     },
     where: {
       id: req.params.id
-    }
+    },
+    attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded','userId']
   });
   if(course) {
     res.json({ course });

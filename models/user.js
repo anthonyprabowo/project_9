@@ -33,7 +33,9 @@ module.exports = (sequelize, DataTypes) => {
     emailAddress: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: {
+        msg: "Email address has been used. Please enter a new email address"
+      },
       validate: {
         notNull: {
           msg: 'Email field cannot be empty'
