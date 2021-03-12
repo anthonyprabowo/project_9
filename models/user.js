@@ -50,6 +50,9 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: 'Password cannot be empty'
         },
+        notEmpty: {
+          msg: 'Password cannot be empty'
+        }
       }
     },
   }, {

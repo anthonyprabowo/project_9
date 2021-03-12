@@ -8,22 +8,28 @@ const { authenticateUser } = require('../middlewares/userAuth');
 
 // Get all courses
 router.get('/', asyncHandler( async (req, res) => {
-  const course = await Course.findAll();
+  const course = await Course.findAll({
+    include: {
+      model: User,
+      as: 'userID',
+    }
+  });
   res.json({course});
 }))
 
 // Get specific course
 router.get('/:id',asyncHandler( async (req, res) => {
-  const course = await Course.findByPk(req.params.id);
+  const course = await Course.findAll({
+    include: {
+      model: User,
+      as: 'userID'
+    },
+    where: {
+      id: req.params.id
+    }
+  });
   if(course) {
-    res.json({ 
-      id: course.id,
-      title: course.title,
-      description: course.description,
-      estimatedTime: course.estimatedTime,
-      materialsNeeded: course.materialsNeeded,
-      userId: course.userId
-    });
+    res.json({ course });
   } else {
     res.status(400).json( { message: `Course with id ${req.params.id} didn't exist`});
   }
@@ -34,7 +40,7 @@ router.post('/', authenticateUser, asyncHandler( async (req, res) => {
   const user = req.currentUser;
   req.body.userId = user.id;
   const course = await Course.create(req.body);
-  res.status(201).json(course);
+  res.location(`api/courses/${course.id}`).status(201);
   
   
 }))
@@ -61,8 +67,8 @@ router.put('/:id', authenticateUser, asyncHandler( async (req, res) => {
 router.delete('/:id', asyncHandler(async (req, res) => {
   const course = await Course.findByPk(req.params.id);
   if(course) {
-    await Course.delete(course);
-    res.status(205).json({message: `Course ${course.id} has been deleted`});
+    await course.destroy();
+    res.status(204);
   } else {
     res.status(400).json({ message: `Course with id ${req.params.id} didn't exist`});
   }

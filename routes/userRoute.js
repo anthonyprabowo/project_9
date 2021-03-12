@@ -18,11 +18,13 @@ router.get('/', authenticateUser, asyncHandler(async (req, res) => {
 // user post route
 router.post('/', asyncHandler(async  (req, res) => {
   const password = req.body.password
-  const hashedPassword = await bcrypt.hash(password, 10);
-  console.log(hashedPassword);
-  req.body.password = hashedPassword;
+  if(password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(hashedPassword);
+    req.body.password = hashedPassword;
+  }
   const user = await User.create(req.body);
-  res.status(201).json(user); 
+  res.status(201).location('/'); 
 }))
 
 
