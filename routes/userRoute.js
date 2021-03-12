@@ -24,7 +24,7 @@ router.post('/', asyncHandler(async  (req, res) => {
     req.body.password = hashedPassword;
   }
   const user = await User.create(req.body);
-  res.status(201).location('/'); 
+  res.location('/').status(201).end(); 
 }))
 
 
