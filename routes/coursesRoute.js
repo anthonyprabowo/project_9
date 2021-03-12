@@ -11,8 +11,12 @@ router.get('/', asyncHandler( async (req, res) => {
   const course = await Course.findAll({
     include: {
       model: User,
-      as: 'userID',
+      as: 'associatedUser',
+    },
+    attributes: {
+      exclude: ['createdAt', 'updatedAt'],
     }
+    
   });
   res.json({course});
 }))
@@ -22,12 +26,15 @@ router.get('/:id',asyncHandler( async (req, res) => {
   const course = await Course.findAll({
     include: {
       model: User,
-      as: 'userID'
+      as: 'associatedUser'
     },
     where: {
       id: req.params.id
     },
-    attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded','userId']
+    attributes: {
+      exclude: ['createdAt', 'updatedAt'],
+    }
+    // attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded','userId']
   });
   if(course) {
     res.json({ course });

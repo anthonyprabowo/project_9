@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Course.associate = (models) => { // associate Course with only 1 user
     Course.belongsTo(models.User, {
-      as: 'userID',
+      as: 'associatedUser',
       foreignKey: 'userId'
     });
   }
